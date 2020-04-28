@@ -33,7 +33,7 @@
 	</div>
 	<!-- CONTAINER CONSEJOS Y YOUTUBE-->
     
-    <div class="container-fluid p-0" id="firstContainer">
+    <div class="container-fluid" id="firstContainer">
 		<div class="row">
 			<!-- Carousel -->
       		<div id="first-carousel" class="col carousel slide" data-ride="carousel">
@@ -78,29 +78,28 @@
       			<iframe src="https://www.youtube.com/embed/4EIIACsLQhQ?cc_load_policy=1&showinfo=0&color=blue" allowfullscreen></iframe>
       		</div>	     
 	    </div>
-</div>
+	</div>
     <!-- CHECKPW-->
     <div class="container-fluid p-3" id="secondContainer">
-    	<div class="row ">
+    	<div class="row">
     		<div class= "col">
-		   		<h4 class="text-success">VERIFIQUE SU CONTRASEÑA</h4>
-		   		<p>Al ingresar la contraseña a testear nuestros algoritmos le brindaran una calificación según lo que nosotros consideramos como una buena contraseña.
+		   		<h4>VERIFIQUE SU CONTRASEÑA</h4>
+		   		<p>Mediante el siguiente formulario usted podrá ingresar una contraseña y nuestros algoritmos le brindaran una calificación según lo que nosotros consideramos como una buena contraseña.
 		   		</p>
-		   		<h4 class="text-success">TUS DATOS NO SERÁN TRANSMITIDOS A NINGÚN SITIO</h4>
+		   		<h4>TUS DATOS NO SERÁN TRANSMITIDOS A NINGÚN SITIO</h4>
 		   		<p>
-		   		Si quisieras, podes almacenar localmente las calificaciones de tus accesos haciendo click en el botón guardar.		
+		   		Podes guardar tus resultados de forma local haciendo click en el botón guardar. De esta manera, vas a poder contar con un breve historial de tus últimos cinco ingresos.		
 		   		</p>
 			</div>
 
-			<div class="col">
-		
+			<div class="col my-auto">
 			   		<!--Form contraseña-->
-			   		<input type="password" class="form-control" placeholder="Ingrese password" id="pass" style="margin-bottom: 10px;margin-top: 10px">
+			   		<input type="password" class="form-control text-center mt-3 mb-3" placeholder="INGRESE PASSWORD" id="pass">
 			   		<!--Progress bar-->
 			  		<div class="progress" style="height:40px">
-			   			<div class="progress-bar progress-bar-striped bg-danger" style="width:0%;height:40px" id="probar">¡Muy insegura!</div>
+			   			<div class="progress-bar progress-bar-striped bg-danger text-center mb-3 mt-3" style="width:0%;height:30px" id="probar">¡Muy insegura!</div>
 					</div>
-					
+					<button type="button" class="btn btn-outline-dark btn-block mt-3 mb-3 " id="saveButton"> <span class="spinner-grow spinner-grow-sm"></span> GUARDAR RESULTADO</button>
 			   	<!--<div class="row">
 			   		 IMPLEMENTAR FUNCIONALIDAD LOCAL STOARGE CORREGI ROW POR ACA Y FALTA EL LISTADO CON CALIFICACIONES
 			   	</div>		   	-->
@@ -118,7 +117,15 @@
    			Evita cadenas que se repitan de forma periodica <br>
    			Utiliza <mark>mayúsculas y minusculas</mark><br></p>
 	</div>
-	
+	<div class="container-fluid p-3 text-center" id="thirdContainer">
+		<h2 class="mt-3 mb-3">ESTOS SON TUS ULTIMAS CINCO PUNTUACIONES GUARDADAS</h2>
+		<h4 id="0R">is coming...</h4>
+		<h4 id="1R">is coming...</h4>
+		<h4 id="2R">is coming...</h4>
+		<h4 id="3R">is coming...</h4>
+		<h4 id="4R">is coming...</h4>
+
+	</div>
 
  	<ul class="nav justify-content-end">
 	  <li class="nav-item">

@@ -1,4 +1,14 @@
 $(function(){
+	storage = window.localStorage;
+	storage.setItem('score',"0");
+	var array = ["one","two","three","four","five"];
+
+	if (storage.getItem("one") == null){
+		createLocalHistory(array,storage)
+		loadLocalHistory(array,storage);
+	} else {
+		loadLocalHistory(array,storage);
+	}
 	// Modifico el tiempo por defecto de las transiciones del carousel. 
 	var carouselId = "#first-carousel"
 	$(carouselId).carousel({interval: 7000});
@@ -8,40 +18,119 @@ $(function(){
 	//Evento que por cada tecla presionada dentro de el campo de texto de password, verifica cuan segura es la password a medida que se va tecleando, reflejando el resultado en la progress bar
 
 	$("#pass").keyup(function(){
-		modifyProBar(chkPass($("#pass").val()));	
+		var value = chkPass($("#pass").val());
+		modifyProBar(value);	
+		document.getElementById("saveButton").classList.remove('disabled');
+		storage.setItem('score',value);
 	});
 
-	$("#mode").click(function(){
+	$(".theme-toggle").click(function(){
 		toggleTheme();	
+		console.log("toggle");
 	});
-  
+
+	$("#saveButton").click(function(){
+		saveResult(array,storage);	
+		document.getElementById("saveButton").classList.add('disabled');
+	});/*
+
+	$("#saveButton").mouseenter(function(){
+		document.getElementById("saveButton").classList.add('disabled');
+		console.log("holavite");
+	});
+  */
 });
 
-function toggleTheme(theme){
-	document.documentElement.classList.toggle('bg-dark');
-	document.getElementById("navbar").classList.toggle('bg-dark');
-	document.getElementById("firstContainer").classList.toggle('bg-dark');
-	document.getElementById("secondContainer").classList.toggle('bg-dark');
-	document.getElementById("navbar").classList.toggle('text-light');
-	document.getElementById("firstContainer").classList.toggle('text-light');
-	document.getElementById("secondContainer").classList.toggle('text-light');
+function loadLocalHistory(array,storage){
+	var value;
+	clearClassesOnLabels();
+	for (var i=0; i < 5; i++){
+		actual = $("#"+i+"R");
+		value = parseInt(storage.getItem(array[i]));
+		if (value >= 0){
+			actual.text(value + "%");
+			if (value >= 0 && value <= 25){
+				actual.addClass('text-danger'); 
+			} else if (value >= 26 && value <= 50) {
+				actual.addClass('text-warning'); 
+			} else if (value >= 51 && value <= 70) {
+				actual.addClass('text-primary'); 
+			} else if (value >= 71 && value <= 100) {
+				actual.addClass('text-success'); 
+			}
+		}
+	}
+};
+
+function clearClassesOnLabels(){
+	for (var i=0; i < 5; i++){
+		 $("#"+i+"R").removeClass("text-danger text-warning text-primary text-success");
+	}
+
+};
+function createLocalHistory(array, storage){
+	for (var i = 0; i < array.length; i++)
+		storage.setItem(array[i],"-1");
+};
+function saveResult(array,storage){
+	var i;
+	
+	var value;
+	var toInsert;
+	var	score = parseInt(storage.getItem("score"));
+
+	// We are looking for a free place.
+	for (i=0; i < 5; i++){
+		value = parseInt(storage.getItem(array[i]));
+		if (value == -1){
+			toInsert = array[i];
+			break;
+		}
+	}
+	// If the set is full, shift right the set and inserted first.
+	if(i==5){
+		for (i = 4; i > 0; i--){
+			storage.setItem(array[i],storage.getItem(array[i-1]));
+		}
+		toInsert = "one";
+	}
+
+	if (score < 0)
+		score = 0;	
+	else if(score > 100)
+		score = 100;
+
+	storage.setItem(toInsert,score);	
+	loadLocalHistory(array,storage);
+};
+	
+function toggleTheme(){
+	//$().toggleClass('bg-dark');
+	$("navbar").toggleClass('bg-dark');
+	$("firstContainer").toggleClass('bg-dark');
+	$("secondContainer").toggleClass('bg-dark');
+	$("navbar").toggleClass('text-light');
+	$("firstContainer").toggleClass('text-light');
+	$("secondContainer").toggleClass('text-light');
 };
 
 function modifyProBar(percentage){
 	var probar = $("#probar");
+
 	if (percentage < 0)
 		probar.attr("style", "width:"+0+"%");	
 	else if(percentage >= 0 && percentage <= 100)
 		probar.attr("style", "width:"+percentage+"%");
 	else 
 		probar.attr("style", "width:"+100+"%");
+
 	if (percentage <= 25){
 		probar.attr("class","progress-bar progress-bar-striped bg-danger");
 		probar.text("Muy insegura");
-	} else if (percentage > 26 && percentage <= 50){
+	} else if (percentage >= 26 && percentage <= 50){
 		probar.attr("class","progress-bar progress-bar-striped bg-warning");
 		probar.text("Insegura");
-	} else if (percentage > 51 && percentage <= 75){
+	} else if (percentage >= 51 && percentage <= 75){
 		probar.attr("class","progress-bar progress-bar-striped bg-info");
 		probar.text("Correcta");
 	} else {
@@ -210,4 +299,3 @@ String.prototype.strReverse = function() {
 	return newstring;
 
 };
-
