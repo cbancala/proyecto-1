@@ -1,8 +1,10 @@
 <!doctype html>
 <html lang="es">
   <head>
-    <title></title>
-    <meta charset="utf-8">
+    <title>ESET - Contraseñas</title>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="img/favicon.ico"/>
+
     <!--<meta name="viewport" content="width=device-width" initial-scale=1>-->
     <meta name="viewport" content="width=device-width">
 
@@ -18,13 +20,13 @@
     <link rel="stylesheet" href="css/app.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.css">
-    <!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
   </head>
-  <body class="text-dark">
+  
+<body class="text-dark">
+	<!-- NAVBAR SUPERIOR-->
   	<nav class="navbar navbar-expand-sm fixed-top bg-light" id="navbar">
 		<a class="navbar-brand" href="index.html">
 			<img class="img-responsive" src="img/logo.webp" alt="Logo" style="width:50%">
@@ -33,11 +35,11 @@
 
 	<!-- JUMBOTRON INTRO-->
 	<div class="jumbotron m-0 p-3 text-center" id="firstJumbotron">
-		  <h4>¿CÓMO MEJORAR LA SEGURIDAD DE MIS ACCESOS A INTERNET?</h4>
-		  <div>Tus datos pueden ser facilmente vulnerados.<br> En esta web te brindamos una serie de acciones básicas para mejorar la seguridad de tus contraseñas.<br> Con estos consejos lograrás fortalecer en gran medida la protección de tu información.</div>
+		  <h4 class="text-info">¿CÓMO MEJORAR LA SEGURIDAD DE MIS ACCESOS A INTERNET?</h4>
+		  <div>Tus datos pueden ser fácilmente vulnerados.<br> En esta web te brindamos una serie de acciones básicas para mejorar la seguridad de tus contraseñas.<br> Con estos consejos lograrás fortalecer en gran medida la protección de tu información.</div>
 	</div>
+
 	<!-- CONTAINER CONSEJOS Y YOUTUBE-->
-    
     <div class="container-fluid p-3" id="firstContainer">
 		<div class="row">
 			<!-- Carousel -->
@@ -49,7 +51,7 @@
 				       	<div class="carousel-caption pw_shadow">
 					    	<h4>¿QUÉ PODEMOS HACER PARA FORTALECER NUESTRA SEGURIDAD?</h4>
 					    	<p>
-				    			<i class="fas fa-hourglass-half"></i> Cambiar contraseñas periodicamente <br>
+				    			<i class="fas fa-hourglass-half"></i> Cambiar contraseñas periódicamente <br>
 			    				<i class="far fa-times-circle"></i> No repetir contraseñas en distintos sitios <br> 
 			    				<i class="far fa-check-circle"></i> Mantener nuestro software actualizado <br>
 			    				<i class="fas fa-user-secret"></i> Evitar almacenar en dónde sea nuestros accesos<br>
@@ -65,7 +67,6 @@
 				    		</p>
 				  		</div>
 			    	</div>
-				    		
 		    		<div class="carousel-item">
 		      			<img src="img/3.webp" alt="CarThree">
 		      			<div class="carousel-caption pw_shadow">
@@ -88,11 +89,11 @@
 		<h4>PARA OBTENER MEJORES RESULTADOS</h4>
 	  	<p>
 	  		Considera una longitud mínima de <mark>15 caracteres</mark><br>
-   			Hace uso de distintos <mark>simbolos y números</mark><br>
-   			Utiliza <mark>mayúsculas y minusculas</mark><br>
+   			Hace uso de distintos <mark>símbolos y números</mark><br>
+   			Utiliza <mark>mayúsculas y minúsculas</mark><br>
    			Evita repetir muchas veces los mismos caracteres a lo largo de la contraseña<br>
    			También evita usar un mismo caracter de forma consecutiva<br>
-   			Evita cadenas que se repitan de forma periodica<br>
+   			Evita cadenas que se repitan de forma periódica<br>
    			</p>
 	</div>
 
@@ -106,7 +107,8 @@
 		   		<h4>TUS DATOS NO SERÁN TRANSMITIDOS A NINGÚN SITIO</h4>
 		   		<p>
 		   		Podes guardar tus resultados de forma local haciendo click en el botón <b>GUARDAR RESULTADO</b>. De esta manera, vas a poder contar con un breve historial de tus últimos cinco ingresos.		
-		   		</p>
+				</p>
+				<p>También podes <a class="text-primary" id="cleanHistory">borrar tu historial</a>.</p>
 			</div>
 
 			<div class="col my-auto">
@@ -117,15 +119,9 @@
 			   			<div class="progress-bar progress-bar-striped bg-danger text-center mb-3 mt-3" style="width:0%;height:30px" id="probar"></div>
 					</div>
 					<button type="button" class="btn btn-raised btn-secondary btn-block mt-3 mb-3" id="saveButton"> <span class="spinner-grow spinner-grow-sm"></span> GUARDAR RESULTADO</button>
-			   	<!--<div class="row">
-			   		 IMPLEMENTAR FUNCIONALIDAD LOCAL STOARGE CORREGI ROW POR ACA Y FALTA EL LISTADO CON CALIFICACIONES
-			   	</div>		   	-->
 			</div>
     	</div>
     </div>
-
-    
-
 
 	<div class="container-fluid p-3 m-0 text-dark" id="thirdContainer">
 		<div class="row">
@@ -137,33 +133,24 @@
 			<div class="col my-auto text-right">
 				<h4>En este gráfico te mostraremos tus últimas cinco puntuaciones almacenadas.</h4>
 				<h5>El promedio de estas puntuaciones es</h5>
-				<h1 id="average">Tu promedio actual de puntuaciones es</h1>
+				<h1 id="average"></h1>
+				<h5 id="avText"></h5>
 			</div>
 		</div>		
-
 	</div>
 
-
 	<nav class="navbar navbar-expand-sm bg-light justify-content-end" id="footerNavBar">
-		<ul class="navbar-nav">
-			
-			<span class="navbar-text">
+		<ul class="navbar-nav">			
+			<li class="navbar-text">
 				Desarrollado por
-			</span>
-			
+			</li>			
 			<li class="nav-item">
 				 <a class="nav-link" href="https://github.com/cbancala" target="_blank">Christian Bancalá</a>
 			</li>
 			<li class="nav-item">
-				<button type="button align-right nav-item" class="btn btn-raised btn-secondary" id='mode'>Cambiar tema</button>
-
+				<button class="btn btn-raised btn-secondary nav-item" id='mode'>Cambiar tema</button>
 			</li>
-			
 		  </ul>
-	  
-	  
-	</nav> 
-
- 	    		
+	</nav> 	    		
  </body>
 </html>

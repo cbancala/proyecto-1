@@ -22,8 +22,6 @@ $(function(){
 		toggleTheme();
 	}
 	
-	
-	
 	//Evento que por cada tecla presionada dentro de el campo de texto de password, verifica cuan segura es la password a medida que se va tecleando, reflejando el resultado en la progress bar
 	
 	$("#pass").keyup(function(){
@@ -47,13 +45,200 @@ $(function(){
 		
 	});
 	
+	$("#cleanHistory").click(function(){
+		cleanHistory(array,storage,chart);	
+		$("#saveButton").toggleClass('disabled');
+		$("#saveButton").attr("disabled", false);
+	});
 });
+/*
+	Borra el historial almacenado. No se utiliza storage.clean debido a que también se almacena otra información. 
+*/
+function cleanHistory(array,storage,chart){
+	var i;
+	for(i = 0; i < 5; i++){
+		storage.setItem(array[i],"0");
+	}
+	updateValues(array,storage,chart);
+}
+
+
+/*
+	Carga los datos del almacenamiento interno, los muestra en un grafico y tambien actualiza la informacion en relacion a los promedios.
+*/
 
 function updateValues(array,storage,chart){ 
 	loadLocalHistory(array,storage,chart);
-	setAverage(array,storage);
+	updateAverage(array,storage);
 };
 
+/*
+	Carga los valores de resultados almacenados en el almacenamiento interrno, almacenandolos en un arreglo para luego mostrarlos por el grafico, con los correspondientes colores. 
+*/
+function loadLocalHistory(array,storage,chart){
+	var value;
+	var updateData = [0,0,0,0,0];
+	var updateBgData = [0,0,0,0,0];
+
+	for (var i=0; i < 5; i++){
+		value = parseInt(storage.getItem(array[i]));
+		if (value >= 0){
+			updateData[i] = value;
+			if (value >= 0 && value <= 25){
+				updateBgData[i] = 'rgba(217, 83, 79, 0.2)';
+			} else if (value >= 26 && value <= 50) {
+				updateBgData[i] = 'rgba(240, 173, 78, 0.2)';
+			} else if (value >= 51 && value <= 75) {
+				updateBgData[i] = 'rgba(91, 192, 222, 0.2)';
+			} else if (value >= 76 && value <= 100) {
+				updateBgData[i] = 'rgba(92, 184, 92, 0.2)';
+			}
+		} else {
+			updateData[i] = 0;
+		}
+	}
+	chart.data.datasets.forEach((dataset) => {
+        dataset.data = updateData;
+        dataset.backgroundColor = updateBgData;
+    });
+    chart.update();
+};
+
+
+function createLocalHistory(array, storage){
+	for (var i = 0; i < array.length; i++)
+		storage.setItem(array[i],"0");
+};
+function saveResult(array,storage){
+	var i;
+	
+	var value;
+	var toInsert;
+	var	score = parseInt(storage.getItem("score"));
+	if (score > 0){
+		// We are looking for a free place.
+		toInsert = array[0];
+		
+		for (i = 4; i > 0; i--){
+			storage.setItem(array[i],storage.getItem(array[i-1]));
+		}
+			
+		if (score < 0)
+			score = 0;	
+		else if(score > 100)
+			score = 100;
+
+		storage.setItem(toInsert,score);	
+	}
+
+};
+/*
+	Calcula el promedio de los valores almacenados en el almacenamiento interno.
+	También muestra por pantalla estos resultados.
+*/
+function updateAverage(array,storage){
+	var averageComponent = $("#average");
+	var i, actual;
+	var cont = 0;
+	var average = 0;
+	for (i = 0; i < 5; i++){
+		actual = storage.getItem(array[i]);
+		if(actual != 0){ 
+			average+= parseInt(storage.getItem(array[i]));
+			cont++;
+		}
+	}
+	if(cont != 0)
+		average = average/cont;
+
+	averageComponent.removeClass("text-danger text-info text-warning text-success");
+	if (average >= 0 && average <= 25){
+		averageComponent.addClass("text-danger");
+	} else if (average >= 26 && average <= 50) {
+		averageComponent.addClass("text-warning");
+	} else if (average >= 51 && average <= 70) {
+		averageComponent.addClass("text-info");
+	} else if (average >= 71 && average <= 100) {
+		averageComponent.addClass("text-success");
+	}
+
+	averageComponent.text(average.toFixed(0));
+	var avTextComponent = $("#avText");
+	if (average > 0 && average < 70)
+		avTextComponent.text("Tu promedio de puntuación se encuentra debajo de los valores aceptables. Te recomendamos que modifiques aquellas contraseñas cuyos resultados fueron menores a 70");
+	else if (average >= 70)
+		avTextComponent.text("Tu promedio de puntuación se encuentra por encima de los valores aceptables ¡felicitaciones!. A partir de ahora, te recomendamos continuar con estos consejos. También, cada cierto tiempo, deberías modificar tus contraseñas para seguir elevando tu seguridad.")
+	else if(average == 0)
+		avTextComponent.text("");
+}
+
+/*
+	Realiza los cambios necesarios en las clases de los componentes HTML para obtener un estilo oscuro.
+*/
+function toggleTheme(){
+	var theme = storage.getItem("theme");
+	if (theme == 'theme-light'){		
+		localStorage.setItem('theme','theme-dark');
+		$("#mode")
+	} else {
+		localStorage.setItem('theme','theme-light');
+	}
+
+	$('body').toggleClass("text-dark")
+	$('body').toggleClass("text-light")
+	$('body').toggleClass("bg-dark")
+
+	$("#navbar").toggleClass('bg-light');
+	$("#navbar").toggleClass('custom-dark-grey text-light');
+	$("#firstContainer").toggleClass('text-dark');
+	$("#firstContainer").toggleClass('bg-dark text-light');
+	$("#secondContainer").toggleClass('text-dark');
+	$("#secondContainer").toggleClass('bg-dark text-light');
+	
+	$("#firstJumbotron").toggleClass('bg-dark text-light');
+
+	$("#thirdContainer").toggleClass('text-dark');
+	$("#thirdContainer").toggleClass('bg-dark text-light');
+	
+	$("#footerNavBar").toggleClass('bg-light');
+	$("#footerNavBar").toggleClass('custom-dark-grey');
+}
+
+/*
+	Modifica la bara de progeso de la web, mostrando el valor recibido por parametro a través de su tamaño y con distintos colores.
+*/
+function modifyProBar(percentage){
+	var probar = $("#probar");
+
+	if (percentage < 0)
+		probar.attr("style", "width:"+0+"%");	
+	else if(percentage >= 0 && percentage <= 100)
+		probar.attr("style", "width:"+percentage+"%");
+	else 
+		probar.attr("style", "width:"+100+"%");
+
+	if (percentage <= 25){
+		probar.attr("class","progress-bar progress-bar-striped bg-danger");
+		if (percentage >=18)
+			probar.text("MUY INSEGURA");
+		else
+			probar.text("");
+	} else if (percentage >= 26 && percentage <= 50){
+		probar.attr("class","progress-bar progress-bar-striped bg-warning");
+		probar.text("INSEGURA");
+	} else if (percentage >= 51 && percentage <= 75){
+		probar.attr("class","progress-bar progress-bar-striped bg-info");
+		probar.text("CORRECTA");
+	} else if (percentage > 76){
+		probar.attr("class","progress-bar progress-bar-striped bg-success");
+		probar.text("¡INSUPERABLE!");
+	}
+	
+};
+
+/*
+	Función que inicializa el gráfico de la web. 
+*/
 function createChart(){
 	var ctx = document.getElementById('myChart');
 	var myChart = new Chart(ctx, {
@@ -94,151 +279,9 @@ function createChart(){
 	return myChart;
 };
 
-
-function loadLocalHistory(array,storage,chart){
-	var value;
-	var updateData = [0,0,0,0,0];
-	var updateBgData = [0,0,0,0,0];
-
-	for (var i=0; i < 5; i++){
-		value = parseInt(storage.getItem(array[i]));
-		if (value >= 0){
-			updateData[i] = value;
-			if (value >= 0 && value <= 25){
-				updateBgData[i] = 'rgba(217, 83, 79, 0.2)';
-			} else if (value >= 26 && value <= 50) {
-				updateBgData[i] = 'rgba(240, 173, 78, 0.2)';
-			} else if (value >= 51 && value <= 70) {
-				updateBgData[i] = 'rgba(91, 192, 222, 0.2)';
-			} else if (value >= 71 && value <= 100) {
-				updateBgData[i] = 'rgba(92, 184, 92, 0.2)';
-			}
-		} else {
-			updateData[i] = 0;
-		}
-	}
-	chart.data.datasets.forEach((dataset) => {
-        dataset.data = updateData;
-        dataset.backgroundColor = updateBgData;
-    });
-    chart.update();
-	/*chart.data.datasets.data = updateData;
-	chart.data.datasets.backgroundColor = updateBgData;*/
-};
-
-
-function createLocalHistory(array, storage){
-	for (var i = 0; i < array.length; i++)
-		storage.setItem(array[i],"0");
-};
-function saveResult(array,storage){
-	var i;
-	
-	var value;
-	var toInsert;
-	var	score = parseInt(storage.getItem("score"));
-	if (score > 0){
-		// We are looking for a free place.
-		toInsert = array[0];
-		
-		for (i = 4; i > 0; i--){
-			storage.setItem(array[i],storage.getItem(array[i-1]));
-		}
-			
-		if (score < 0)
-			score = 0;	
-		else if(score > 100)
-			score = 100;
-
-		storage.setItem(toInsert,score);	
-	}
-	
-};
-
-function setAverage(array,storage){
-	var averageComponent = $("#average");
-	var i;
-	var average = 0;
-	for (i = 0; i < 5; i++){
-		average+= parseInt(storage.getItem(array[i]));
-	}
-	average = average/5;
-	averageComponent.removeClass("text-danger text-info text-warning text-success");
-	if (average >= 0 && average <= 25){
-		averageComponent.addClass("text-danger");
-	} else if (average >= 26 && average <= 50) {
-		averageComponent.addClass("text-warning");
-	} else if (average >= 51 && average <= 70) {
-		averageComponent.addClass("text-info");
-	} else if (average >= 71 && average <= 100) {
-		averageComponent.addClass("text-success");
-	}
-	averageComponent.text(average+"%")
-
-
-}
-
-	
-function toggleTheme(){
-	var theme = storage.getItem("theme");
-	if (theme == 'theme-light'){		
-		localStorage.setItem('theme','theme-dark');
-		$("#mode")
-	} else {
-		localStorage.setItem('theme','theme-light');
-	}
-
-	$('body').toggleClass("text-dark")
-	$('body').toggleClass("text-light")
-
-	$("#navbar").toggleClass('bg-light');
-	$("#navbar").toggleClass('custom-dark-grey text-light');
-	$("#firstContainer").toggleClass('text-dark');
-	$("#firstContainer").toggleClass('bg-dark text-light');
-	$("#secondContainer").toggleClass('text-dark');
-	$("#secondContainer").toggleClass('bg-dark text-light');
-	
-	
-	$("#firstJumbotron").toggleClass('bg-dark text-light');
-	
-	
-	$("#thirdContainer").toggleClass('text-dark');
-	$("#thirdContainer").toggleClass('bg-dark text-light');
-	
-	$("#footerNavBar").toggleClass('bg-light');
-	$("#footerNavBar").toggleClass('custom-dark-grey');
-	
-}
-
-function modifyProBar(percentage){
-	var probar = $("#probar");
-
-	if (percentage < 0)
-		probar.attr("style", "width:"+0+"%");	
-	else if(percentage >= 0 && percentage <= 100)
-		probar.attr("style", "width:"+percentage+"%");
-	else 
-		probar.attr("style", "width:"+100+"%");
-
-	if (percentage <= 25){
-		probar.attr("class","progress-bar progress-bar-striped bg-danger");
-		if (percentage >=18)
-			probar.text("MUY INSEGURA");
-		else
-			probar.text("");
-	} else if (percentage >= 26 && percentage <= 50){
-		probar.attr("class","progress-bar progress-bar-striped bg-warning");
-		probar.text("INSEGURA");
-	} else if (percentage >= 51 && percentage <= 75){
-		probar.attr("class","progress-bar progress-bar-striped bg-info");
-		probar.text("CORRECTA");
-	} else {
-		probar.attr("class","progress-bar progress-bar-striped bg-success");
-		probar.text("¡INSUPERABLE!");
-	}
-	
-};
-
+/*
+Función encargada de analizar un string para retornar como resultado la puntuación correspondiente a su nivel de seguridad. 
+*/
 function chkPass(pwd) {
 
 	// Simultaneous variable declaration and value assignment aren't supported in IE apparently

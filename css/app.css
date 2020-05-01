@@ -1,5 +1,5 @@
 .jumbotron-back{
- 	background-image: url("jumb.webp");
+ 	background-image: url("../img/jumb.webp");
 	background-attachment: fixed;
   	background-position: center;
   	background-repeat: no-repeat;
@@ -10,7 +10,6 @@ body {
 	padding-top: 65px;
 	
 }
-
 .custom-dark-grey { 
 	background-color: #121212;
 	
