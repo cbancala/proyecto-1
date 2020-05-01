@@ -1,76 +1,135 @@
 $(function(){
 	storage = window.localStorage;
+	//storage.clear();
 	storage.setItem('score',"0");
+	$("#saveButton").attr("disabled",false);
 	var array = ["one","two","three","four","five"];
+	chart = createChart();
 
-	if (storage.getItem("one") == null){
-		createLocalHistory(array,storage)
-		loadLocalHistory(array,storage);
-	} else {
-		loadLocalHistory(array,storage);
-	}
+	if (storage.getItem("one") == null)
+			createLocalHistory(array,storage);
+
+	updateValues(array,storage,chart);
 	// Modifico el tiempo por defecto de las transiciones del carousel. 
-	var carouselId = "#first-carousel"
+	var carouselId = "#first-carousel";
 	$(carouselId).carousel({interval: 7000});
-	//localStorage.setItem('theme','theme-light');
-	//document.documentElement.className = 'theme-light';
 
+	var theme = storage.getItem("theme");
+	if (theme == null){		
+		localStorage.setItem('theme','theme-light');
+	} else if (theme == 'theme-dark'){
+		localStorage.setItem('theme','theme-light');
+		toggleTheme();
+	}
+	
+	
+	
 	//Evento que por cada tecla presionada dentro de el campo de texto de password, verifica cuan segura es la password a medida que se va tecleando, reflejando el resultado en la progress bar
-
+	
 	$("#pass").keyup(function(){
 		var value = chkPass($("#pass").val());
 		modifyProBar(value);	
-		document.getElementById("saveButton").classList.remove('disabled');
+		$("#saveButton").toggleClass('disabled');
+		$("#saveButton").attr("disabled", false);
 		storage.setItem('score',value);
 	});
 
-	$(".theme-toggle").click(function(){
+	$("#mode").click(function(){
 		toggleTheme();	
 		console.log("toggle");
 	});
 
 	$("#saveButton").click(function(){
-		saveResult(array,storage);	
-		document.getElementById("saveButton").classList.add('disabled');
-	});/*
-
-	$("#saveButton").mouseenter(function(){
-		document.getElementById("saveButton").classList.add('disabled');
-		console.log("holavite");
+			saveResult(array,storage);	
+			updateValues(array,storage,chart);
+			$("#saveButton").toggleClass('disabled');
+			$("#saveButton").attr("disabled", true);
+		
 	});
-  */
+	
 });
 
-function loadLocalHistory(array,storage){
+function updateValues(array,storage,chart){ 
+	loadLocalHistory(array,storage,chart);
+	setAverage(array,storage);
+};
+
+function createChart(){
+	var ctx = document.getElementById('myChart');
+	var myChart = new Chart(ctx, {
+
+    type: 'bar',
+    data: {
+        labels: ['1°', '2°', '3°', '4°', '5°'],
+        datasets: [{
+        	label: "Puntuación obtenida",
+            data: [0, 100, 0, 100, 0],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'            
+            ],
+            borderColor: [
+                'rgba(41, 43, 44, 1)',
+                'rgba(41, 43, 44, 1)',
+                'rgba(41, 43, 44, 1)',
+                'rgba(41, 43, 44, 1)',
+                'rgba(41, 43, 44, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+}, {responsive: true});
+	return myChart;
+};
+
+
+function loadLocalHistory(array,storage,chart){
 	var value;
-	clearClassesOnLabels();
+	var updateData = [0,0,0,0,0];
+	var updateBgData = [0,0,0,0,0];
+
 	for (var i=0; i < 5; i++){
-		actual = $("#"+i+"R");
 		value = parseInt(storage.getItem(array[i]));
 		if (value >= 0){
-			actual.text(value + "%");
+			updateData[i] = value;
 			if (value >= 0 && value <= 25){
-				actual.addClass('text-danger'); 
+				updateBgData[i] = 'rgba(217, 83, 79, 0.2)';
 			} else if (value >= 26 && value <= 50) {
-				actual.addClass('text-warning'); 
+				updateBgData[i] = 'rgba(240, 173, 78, 0.2)';
 			} else if (value >= 51 && value <= 70) {
-				actual.addClass('text-primary'); 
+				updateBgData[i] = 'rgba(91, 192, 222, 0.2)';
 			} else if (value >= 71 && value <= 100) {
-				actual.addClass('text-success'); 
+				updateBgData[i] = 'rgba(92, 184, 92, 0.2)';
 			}
+		} else {
+			updateData[i] = 0;
 		}
 	}
+	chart.data.datasets.forEach((dataset) => {
+        dataset.data = updateData;
+        dataset.backgroundColor = updateBgData;
+    });
+    chart.update();
+	/*chart.data.datasets.data = updateData;
+	chart.data.datasets.backgroundColor = updateBgData;*/
 };
 
-function clearClassesOnLabels(){
-	for (var i=0; i < 5; i++){
-		 $("#"+i+"R").removeClass("text-danger text-warning text-primary text-success");
-	}
 
-};
 function createLocalHistory(array, storage){
 	for (var i = 0; i < array.length; i++)
-		storage.setItem(array[i],"-1");
+		storage.setItem(array[i],"0");
 };
 function saveResult(array,storage){
 	var i;
@@ -78,41 +137,78 @@ function saveResult(array,storage){
 	var value;
 	var toInsert;
 	var	score = parseInt(storage.getItem("score"));
-
-	// We are looking for a free place.
-	for (i=0; i < 5; i++){
-		value = parseInt(storage.getItem(array[i]));
-		if (value == -1){
-			toInsert = array[i];
-			break;
-		}
-	}
-	// If the set is full, shift right the set and inserted first.
-	if(i==5){
+	if (score > 0){
+		// We are looking for a free place.
+		toInsert = array[0];
+		
 		for (i = 4; i > 0; i--){
 			storage.setItem(array[i],storage.getItem(array[i-1]));
 		}
-		toInsert = "one";
+			
+		if (score < 0)
+			score = 0;	
+		else if(score > 100)
+			score = 100;
+
+		storage.setItem(toInsert,score);	
 	}
-
-	if (score < 0)
-		score = 0;	
-	else if(score > 100)
-		score = 100;
-
-	storage.setItem(toInsert,score);	
-	loadLocalHistory(array,storage);
+	
 };
+
+function setAverage(array,storage){
+	var averageComponent = $("#average");
+	var i;
+	var average = 0;
+	for (i = 0; i < 5; i++){
+		average+= parseInt(storage.getItem(array[i]));
+	}
+	average = average/5;
+	averageComponent.removeClass("text-danger text-info text-warning text-success");
+	if (average >= 0 && average <= 25){
+		averageComponent.addClass("text-danger");
+	} else if (average >= 26 && average <= 50) {
+		averageComponent.addClass("text-warning");
+	} else if (average >= 51 && average <= 70) {
+		averageComponent.addClass("text-info");
+	} else if (average >= 71 && average <= 100) {
+		averageComponent.addClass("text-success");
+	}
+	averageComponent.text(average+"%")
+
+
+}
+
 	
 function toggleTheme(){
-	//$().toggleClass('bg-dark');
-	$("navbar").toggleClass('bg-dark');
-	$("firstContainer").toggleClass('bg-dark');
-	$("secondContainer").toggleClass('bg-dark');
-	$("navbar").toggleClass('text-light');
-	$("firstContainer").toggleClass('text-light');
-	$("secondContainer").toggleClass('text-light');
-};
+	var theme = storage.getItem("theme");
+	if (theme == 'theme-light'){		
+		localStorage.setItem('theme','theme-dark');
+		$("#mode")
+	} else {
+		localStorage.setItem('theme','theme-light');
+	}
+
+	$('body').toggleClass("text-dark")
+	$('body').toggleClass("text-light")
+
+	$("#navbar").toggleClass('bg-light');
+	$("#navbar").toggleClass('custom-dark-grey text-light');
+	$("#firstContainer").toggleClass('text-dark');
+	$("#firstContainer").toggleClass('bg-dark text-light');
+	$("#secondContainer").toggleClass('text-dark');
+	$("#secondContainer").toggleClass('bg-dark text-light');
+	
+	
+	$("#firstJumbotron").toggleClass('bg-dark text-light');
+	
+	
+	$("#thirdContainer").toggleClass('text-dark');
+	$("#thirdContainer").toggleClass('bg-dark text-light');
+	
+	$("#footerNavBar").toggleClass('bg-light');
+	$("#footerNavBar").toggleClass('custom-dark-grey');
+	
+}
 
 function modifyProBar(percentage){
 	var probar = $("#probar");
@@ -126,16 +222,19 @@ function modifyProBar(percentage){
 
 	if (percentage <= 25){
 		probar.attr("class","progress-bar progress-bar-striped bg-danger");
-		probar.text("Muy insegura");
+		if (percentage >=18)
+			probar.text("MUY INSEGURA");
+		else
+			probar.text("");
 	} else if (percentage >= 26 && percentage <= 50){
 		probar.attr("class","progress-bar progress-bar-striped bg-warning");
-		probar.text("Insegura");
+		probar.text("INSEGURA");
 	} else if (percentage >= 51 && percentage <= 75){
 		probar.attr("class","progress-bar progress-bar-striped bg-info");
-		probar.text("Correcta");
+		probar.text("CORRECTA");
 	} else {
 		probar.attr("class","progress-bar progress-bar-striped bg-success");
-		probar.text("¡Insuperable!");
+		probar.text("¡INSUPERABLE!");
 	}
 	
 };
@@ -155,8 +254,6 @@ function chkPass(pwd) {
 	var sAlphas = "abcdefghijklmnopqrstuvwxyz";
 	var sNumerics = "01234567890";
 	var sSymbols = ")!@#$%^&*()";
-	var sComplexity = "Too Short";
-	var sStandards = "Below";
 	var nMinPwdLen = 8;
 
 
