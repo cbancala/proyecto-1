@@ -38,10 +38,10 @@
 	</div>
 
 	<!-- CONTAINER CONSEJOS Y YOUTUBE-->
-    <div class="container-fluid p-3" id="firstContainer">
+    <div class="container mb-3" id="firstContainer">
 		<div class="row">
 			<!-- Carousel -->
-      		<div id="first-carousel" class="col carousel slide" data-ride="carousel">
+      		<div id="first-carousel" class="col-sm-6 mt-3 carousel slide" data-ride="carousel">
 				<!-- The slideshow -->
 				<div class="carousel-inner">
 					<div class="carousel-item active">
@@ -78,12 +78,14 @@
 
 		      </div>
       		<!--YouTube iframe-->
-      		<div class="col embed-responsive embed-responsive-16by9">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/I8AhGbzzego?cc_load_policy=1&showinfo=0&color=blue" allowfullscreen></iframe>
+      		<div class="col-sm-6 mt-3 ">
+				<div class="embed-responsive embed-responsive-16by9">
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/I8AhGbzzego?cc_load_policy=1&showinfo=0&color=blue" allowfullscreen></iframe>
+				</div>
       		</div>	     
 	    </div>
 	</div>
-	<div class="jumbotron jumbotron-back m-0 p-6 text-light" id="secondJumbotron">
+	<div class="jumbotron jumbotron-back text-light" id="secondJumbotron">
 		<h4>PARA OBTENER MEJORES RESULTADOS</h4>
 	  	<p>
 	  		Considera una longitud mínima de <mark>15 caracteres</mark><br>
@@ -96,9 +98,9 @@
 	</div>
 
     <!-- CHECKPW-->
-    <div class="container-fluid p-4 text-dark" id="secondContainer">
+    <div class="container text-dark" id="secondContainer">
     	<div class="row">
-    		<div class= "col">
+    		<div class= "col-sm-6">
 		   		<h4>VERIFIQUE SU CONTRASEÑA</h4>
 		   		<p>Mediante el siguiente formulario usted podrá ingresar sus contraseñas. Nosotros le daremos una calificación a través de ciertas comprobaciones.
 		   		</p>
@@ -109,7 +111,7 @@
 				<p>También podes <a class="text-primary" id="cleanHistory">borrar tu historial</a>.</p>
 			</div>
 
-			<div class="col my-auto">
+			<div class="col-sm-6 my-auto">
 			   		<!--Form contraseña-->
 			   		<input type="password" class="form-control text-center mt-3 mb-3" placeholder="INGRESE PASSWORD" id="pass">
 			   		<!--Progress bar-->
@@ -121,14 +123,14 @@
     	</div>
     </div>
 
-	<div class="container-fluid p-3 m-0 text-dark" id="thirdContainer">
+	<div class="container text-dark" id="thirdContainer">
 		<div class="row">
-			<div class="card col">
+			<div class="card-sm-6 col">
                 <div class="card-body">
                    	<canvas id="myChart" ></canvas>
                 </div>
 			</div>
-			<div class="col my-auto text-right">
+			<div class="col -sm-6 my-auto text-right">
 				<h4>En este gráfico te mostraremos tus últimas cinco puntuaciones almacenadas.</h4>
 				<h5>El promedio de estas puntuaciones es</h5>
 				<h1 id="average"></h1>
