@@ -1,5 +1,5 @@
 .jumbotron-back{
- 	background-image: url("../img/jumb.webp");
+ 	background-image: url("../img/jumb.jpg");
 	background-attachment: fixed;
   	background-position: center;
   	background-repeat: no-repeat;
@@ -12,7 +12,6 @@ body {
 }
 .custom-dark-grey { 
 	background-color: #121212;
-	
 }
 
 /* Make the image fully responsive */
@@ -21,6 +20,10 @@ body {
 	height: 100%;
 }
 
-.pw_shadow{
-  	text-shadow: 0px 0px 5px black;
+.shadow-black{
+  	text-shadow: 0px 0px 10px black;
+}
+
+.shadow-white{
+	text-shadow: 0px 0px 10px white;
 }
